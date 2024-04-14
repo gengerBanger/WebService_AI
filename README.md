@@ -6,4 +6,4 @@
   * 'app.py' - streamlit file
   * 'eda.py' - script for data preprocessing
 ## Deployed application
-  *'https://webserviceai-rbrcj7panchrakuzv2rfsb.streamlit.app/'
+  https://webserviceai-rbrcj7panchrakuzv2rfsb.streamlit.app/
