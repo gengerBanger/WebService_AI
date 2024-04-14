@@ -1,14 +1,14 @@
 import pandas as pd
 
-d_work = pd.read_csv('data\\D_work.csv')
-d_pens = pd.read_csv('data\\D_pens.csv')
-d_clients = pd.read_csv('data\\D_clients.csv')
-d_loan = pd.read_csv('data\\D_loan.csv')
-d_close_loan = pd.read_csv('data\\D_close_loan.csv')
-d_target = pd.read_csv('data\\D_target.csv')
-d_job = pd.read_csv('data\\D_job.csv')
-d_salary = pd.read_csv('data\\D_salary.csv')
-d_last_credit = pd.read_csv('data\\D_last_credit.csv')
+d_work = pd.read_csv('data/D_work.csv')
+d_pens = pd.read_csv('data/D_pens.csv')
+d_clients = pd.read_csv('data/D_clients.csv')
+d_loan = pd.read_csv('data/D_loan.csv')
+d_close_loan = pd.read_csv('data/D_close_loan.csv')
+d_target = pd.read_csv('data/D_target.csv')
+d_job = pd.read_csv('data/D_job.csv')
+d_salary = pd.read_csv('data/D_salary.csv')
+d_last_credit = pd.read_csv('data/D_last_credit.csv')
 
 def gluing_tables():
 
