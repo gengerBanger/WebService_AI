@@ -5,5 +5,6 @@
   * 'requirements' - library package
   * 'app.py' - streamlit file
   * 'eda.py' - script for data preprocessing
+  * 'client_eda.ipynb' - notebook for data preprocessing
 ## Deployed application
   https://webserviceai-rbrcj7panchrakuzv2rfsb.streamlit.app/
