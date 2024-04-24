@@ -85,6 +85,7 @@ def main_process() -> None:
     top_weights(model_tab, X_train, y_train, columns)
     test_with_limit(model_tab, X_test, y_test)
     predict_part(model_tab, data)
+
 def set_config() -> None:
     st.set_page_config(page_title="EDA Clients",
                        page_icon=":guardsman:",

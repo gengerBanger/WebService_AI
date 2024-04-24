@@ -8,6 +8,7 @@ from sklearn.metrics import classification_report, confusion_matrix
 
 scaler = MinMaxScaler()
 encoder = OneHotEncoder(sparse_output=False)
+
 def preprocessing(data: DataFrame) -> tuple[np.array, np.array, Series, Series, list[str]]:
     model_data = data.drop(['ID_CLIENT', 'REG_ADDRESS_PROVINCE', 'FACT_ADDRESS_PROVINCE', 'POSTAL_ADDRESS_PROVINCE',
                           'FL_PRESENCE_FL', 'OWN_AUTO'], axis=1)
@@ -55,7 +56,7 @@ def test_model(scaled_X_test: np.array, y_test: Series, limit=.5):
 
     return matrix, report
 
-def get_top_weights(columns) -> list[float]:
+def get_top_weights(columns):
     weights = model.coef_
     weights_df = pd.DataFrame({'Признак': list(columns),
                                'Вес': weights[0],
