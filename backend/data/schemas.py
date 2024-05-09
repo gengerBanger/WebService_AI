@@ -1,0 +1,20 @@
+from pydantic import BaseModel
+class GetAllInfo(BaseModel):
+    ID_CLIENT: int
+    AGE: int
+    GENDER: int
+    EDUCATION: str
+    MARITAL_STATUS: str
+    CHILD_TOTAL: int
+    DEPENDANTS: int
+    SOCSTATUS_WORK_FL: int
+    SOCSTATUS_PENS_FL: int
+    REG_ADDRESS_PROVINCE: str
+    FACT_ADDRESS_PROVINCE: str
+    POSTAL_ADDRESS_PROVINCE: str
+    FL_PRESENCE_FL: int
+    OWN_AUTO: int
+    PERSONAL_INCOME: int
+    Loan_count: int
+    CLOSED_FL: int
+    TARGET: int

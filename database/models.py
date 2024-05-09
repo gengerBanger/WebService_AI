@@ -7,7 +7,7 @@ class Client(Base):
 
     ID_CLIENT = Column(Integer, primary_key=True, nullable=False)
     AGE = Column(Integer, nullable=False)
-    GENDER = Column(String, nullable=False)
+    GENDER = Column(Integer, nullable=False)
     EDUCATION = Column(String, nullable=False)
     MARITAL_STATUS = Column(String, nullable=False)
     CHILD_TOTAL = Column(Integer, nullable=False)

@@ -4,7 +4,7 @@ import seaborn as sns
 import pandas as pd
 
 from translators import *
-def get_plot_continuous_feature(data, column: str, category: str) -> Figure:
+def get_plot_continuous_feature(column: str, category: str, data) -> Figure:
     fig, ax = plt.subplots(figsize=(8, 4))
     sns.kdeplot(data, x=rus_eng_columns[column], hue=rus_eng_categories[category], fill=True, ax=ax)
     plt.grid()
@@ -16,7 +16,7 @@ def get_plot_continuous_feature(data, column: str, category: str) -> Figure:
 
     return fig
 
-def get_plot_categorical_feature(data, column: str, category: str) -> Figure:
+def get_plot_categorical_feature(column: str, category: str, data) -> Figure:
     fig, ax = plt.subplots(figsize=(8, 4))
     sns.countplot(data, x=rus_eng_columns[column], hue=rus_eng_categories[category], ax=ax)
     plt.grid()
