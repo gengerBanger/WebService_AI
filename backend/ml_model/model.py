@@ -4,10 +4,11 @@ from pandas import DataFrame, Series
 from sklearn.preprocessing import MinMaxScaler, OneHotEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report, confusion_matrix
+
 
 scaler = MinMaxScaler()
 encoder = OneHotEncoder(sparse_output=False)
+model = LogisticRegression()
 
 def preprocessing(data: DataFrame) -> tuple[np.array, np.array, Series, Series, list[str]]:
     model_data = data.drop(['ID_CLIENT', 'REG_ADDRESS_PROVINCE', 'FACT_ADDRESS_PROVINCE', 'POSTAL_ADDRESS_PROVINCE',
@@ -34,27 +35,17 @@ def preprocessing(data: DataFrame) -> tuple[np.array, np.array, Series, Series, 
 
     return scaled_X_train, scaled_X_test, y_train, y_test, cooked_X.columns
 
-def create_model_fit(scaled_X_train: np.array, y_train: Series):
-    global model
-    model = LogisticRegression()
+def model_fit(scaled_X_train: np.array, y_train: Series):
     model.fit(scaled_X_train, y_train)
 
-def test_model(scaled_X_test: np.array, y_test: Series, limit=.5):
+def test_model(scaled_X_test, limit):
     preds_proba = model.predict_proba(scaled_X_test)
     proba_response = preds_proba[:, 1]
     new_labels = proba_response > limit
 
-    new_labels = new_labels.astype('int')
+    new_labels = [int(x) for x in new_labels]
 
-    matrix = confusion_matrix(y_test, new_labels)
-
-    report = classification_report(y_test,
-                                   new_labels,
-                                   target_names=['Нет отклика', 'Есть отклик'],
-                                   output_dict=True,
-                                   zero_division=1)
-
-    return matrix, report
+    return {'new_labels': list(new_labels)}
 
 def get_top_weights(columns):
     weights = model.coef_
@@ -62,7 +53,7 @@ def get_top_weights(columns):
                                'Вес': weights[0],
                                'Модуль веса': abs(weights[0])})
     weights_df = weights_df.sort_values(by='Модуль веса', ascending=False)[['Признак', 'Вес']]
-    return weights_df.head(7)
+    return weights_df.head(7).to_dict(orient='list')
 
 def get_predict_proba(features):
     client_info = pd.DataFrame(columns=['AGE', 'GENDER', 'EDUCATION', 'MARITAL_STATUS', 'CHILD_TOTAL',
@@ -78,7 +69,7 @@ def get_predict_proba(features):
 
     predict = model.predict_proba(scaled_client)
 
-    return f"Вероятность отклика - {round(predict[0][1] * 100, 2)} %"
+    return {'proba': round(predict[0][1] * 100, 2)}
 
 
 

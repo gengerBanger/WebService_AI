@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+from sklearn.metrics import classification_report, confusion_matrix
 from matplotlib.figure import Figure
 import seaborn as sns
 import pandas as pd
@@ -49,3 +50,14 @@ def get_confusion_map(matrix) -> Figure:
     plt.ylabel('Фактический класс')
 
     return fig
+
+def get_report(y_test, new_labels):
+    matrix = confusion_matrix(y_test, new_labels)
+
+    report = classification_report(y_test,
+                                   new_labels,
+                                   target_names=['Нет отклика', 'Есть отклик'],
+                                   output_dict=True,
+                                   zero_division=1)
+
+    return matrix, report

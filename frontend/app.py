@@ -1,9 +1,10 @@
 import numpy as np
 import streamlit as st
 
-
 from graphs import *
-from request import get_info
+from request import get_info, get_split_data, get_fit_model,\
+    get_test_model, get_weights, get_predict
+
 @st.cache_data
 def load_data():
     return get_info()
@@ -13,13 +14,13 @@ def main_process() -> None:
     set_config()
     eda_tab, model_tab = set_tabs()
     data = load_data()
-    # X_train, X_test, y_train, y_test, columns = preprocessing(data)
+    X_train, X_test, y_train, y_test, columns = get_split_data(data)
 
     charts(eda_tab, data)
     corr_and_tables(eda_tab, data)
 
-    # top_weights(model_tab, X_train, y_train, columns)
-    # test_with_limit(model_tab, X_test, y_test)
+    top_weights(model_tab, X_train, y_train, columns)
+    test_with_limit(model_tab, X_test, y_test)
     predict_part(model_tab, data)
 
 def set_config() -> None:
@@ -56,7 +57,7 @@ def charts(tab, data) -> None:
                 if select_graph_distribution in ['Возраст', 'Доход']:
                     st.pyplot(get_plot_continuous_feature(select_graph_distribution, select_hue, data))
                 else:
-                    st.pyplot(get_plot_categorical_feature(select_graph_distribution, select_hue,data))
+                    st.pyplot(get_plot_categorical_feature(select_graph_distribution, select_hue, data))
 
 def corr_and_tables(tab, data) -> None:
     with tab:
@@ -76,10 +77,10 @@ def top_weights(tab, X_train, y_train, columns) -> None:
         st.title('Тестирование модели')
         st.divider()
 
-        # create_model_fit(X_train, y_train)
-        #
-        # st.subheader('Признаки с большим влиянием на результат работы модели')
-        # st.table(get_top_weights(columns))
+        get_fit_model(X_train, y_train)
+
+        st.subheader('Признаки с большим влиянием на результат работы модели')
+        st.table(get_weights(columns))
 
 def test_with_limit(tab, X_test, y_test) -> None:
     with tab:
@@ -92,16 +93,17 @@ def test_with_limit(tab, X_test, y_test) -> None:
                 'Порог уверенности модели для класса "Есть отклик"',
                 options=np.arange(0, 1, .01)
             )
-            # matrix, report = test_model(X_test, y_test, limit)
+            new_labels = get_test_model(X_test, limit)
+            matrix, report = get_report(y_test, new_labels)
 
         with col2:
             st.subheader('Результаты классификации')
 
         col21, col22 = st.columns(2)
-        # with col21:
-        #     st.pyplot(get_confusion_map(matrix))
-        # with col22:
-        #     st.table(report)
+        with col21:
+            st.pyplot(get_confusion_map(matrix))
+        with col22:
+            st.table(report)
 
 def predict_part(tab, data) -> None:
     with tab:
@@ -157,8 +159,8 @@ def predict_part(tab, data) -> None:
 
         features = [age, gender, education, family_status,
                     child, dependat, work, pens, income, loans, closed_loans]
-
-        # st.success(get_predict_proba(features))
+        proba = get_predict(features)
+        st.success(f"Вероятность отклика - {proba} %")
 
 if __name__ == "__main__":
     main_process()
