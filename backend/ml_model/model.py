@@ -1,16 +1,16 @@
 import numpy as np
 import pandas as pd
+import pickle
 from pandas import DataFrame, Series
 from sklearn.preprocessing import MinMaxScaler, OneHotEncoder
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-
 
 scaler = MinMaxScaler()
 encoder = OneHotEncoder(sparse_output=False)
-model = LogisticRegression()
+with open('backend/ml_model/model.pkl', 'rb') as f:
+    svc_model = pickle.load(f)
 
-def preprocessing(data: DataFrame) -> tuple[np.array, np.array, Series, Series, list[str]]:
+def preprocessing(data: DataFrame) -> tuple[np.array, Series, list[str]]:
     model_data = data.drop(['ID_CLIENT', 'REG_ADDRESS_PROVINCE', 'FACT_ADDRESS_PROVINCE', 'POSTAL_ADDRESS_PROVINCE',
                           'FL_PRESENCE_FL', 'OWN_AUTO'], axis=1)
     model_data.rename(columns={'CLOSED_FL': 'Closed_loans'}, inplace=True)
@@ -33,13 +33,10 @@ def preprocessing(data: DataFrame) -> tuple[np.array, np.array, Series, Series, 
     scaled_X_train = scaler.fit_transform(X_train)
     scaled_X_test = scaler.transform(X_test)
 
-    return scaled_X_train, scaled_X_test, y_train, y_test, cooked_X.columns
-
-def model_fit(scaled_X_train: np.array, y_train: Series):
-    model.fit(scaled_X_train, y_train)
+    return scaled_X_test, y_test, cooked_X.columns
 
 def test_model(scaled_X_test, limit):
-    preds_proba = model.predict_proba(scaled_X_test)
+    preds_proba = svc_model.predict_proba(scaled_X_test)
     proba_response = preds_proba[:, 1]
     new_labels = proba_response > limit
 
@@ -48,7 +45,7 @@ def test_model(scaled_X_test, limit):
     return {'new_labels': list(new_labels)}
 
 def get_top_weights(columns):
-    weights = model.coef_
+    weights = svc_model.coef_
     weights_df = pd.DataFrame({'Признак': list(columns),
                                'Вес': weights[0],
                                'Модуль веса': abs(weights[0])})
@@ -67,9 +64,12 @@ def get_predict_proba(features):
     encoded_client = df_encoded.drop(categorical_columns, axis=1)
     scaled_client = scaler.transform(encoded_client)
 
-    predict = model.predict_proba(scaled_client)
+    predict = svc_model.predict_proba(scaled_client)
 
     return {'proba': round(predict[0][1] * 100, 2)}
+
+def get_probs(scaled_X_test):
+    return {'probs': list(svc_model.predict_proba(scaled_X_test)[:, 1])}
 
 
 

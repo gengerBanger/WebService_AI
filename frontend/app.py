@@ -2,8 +2,8 @@ import numpy as np
 import streamlit as st
 
 from graphs import *
-from request import get_info, get_split_data, get_fit_model,\
-    get_test_model, get_weights, get_predict
+from request import get_info, get_split_data,\
+    get_test_model, get_predict, get_probs_ROC
 
 @st.cache_data
 def load_data():
@@ -14,12 +14,12 @@ def main_process() -> None:
     set_config()
     eda_tab, model_tab = set_tabs()
     data = load_data()
-    X_train, X_test, y_train, y_test, columns = get_split_data(data)
+    X_test, y_test, columns = get_split_data(data)
 
     charts(eda_tab, data)
     corr_and_tables(eda_tab, data)
 
-    top_weights(model_tab, X_train, y_train, columns)
+    roc_curve(model_tab, X_test, y_test)
     test_with_limit(model_tab, X_test, y_test)
     predict_part(model_tab, data)
 
@@ -72,15 +72,15 @@ def corr_and_tables(tab, data) -> None:
             st.subheader('Числовые характеристики текстовых столбцов')
             st.dataframe(data.describe(include='object'))
 
-def top_weights(tab, X_train, y_train, columns) -> None:
+def roc_curve(tab, X_test, y_test) -> None:
     with tab:
         st.title('Тестирование модели')
         st.divider()
-
-        get_fit_model(X_train, y_train)
-
-        st.subheader('Признаки с большим влиянием на результат работы модели')
-        st.table(get_weights(columns))
+        col1, col2 = st.columns(2)
+        with col1:
+            st.subheader('ROC-AUG')
+        with col2:
+            st.pyplot(get_roc_curve(y_test, get_probs_ROC(X_test)))
 
 def test_with_limit(tab, X_test, y_test) -> None:
     with tab:

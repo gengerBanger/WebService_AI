@@ -1,5 +1,5 @@
 from matplotlib import pyplot as plt
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_report, confusion_matrix, RocCurveDisplay
 from matplotlib.figure import Figure
 import seaborn as sns
 import pandas as pd
@@ -61,3 +61,9 @@ def get_report(y_test, new_labels):
                                    zero_division=1)
 
     return matrix, report
+
+def get_roc_curve(y_test, probs):
+    roc_display = RocCurveDisplay.from_predictions(y_test, probs)
+    fig, ax = plt.subplots(figsize=(8, 4))
+    roc_display.plot(ax=ax)
+    return fig
