@@ -9,12 +9,15 @@ from request import get_info, get_split_data,\
 def load_data():
     return get_info()
 
+@st.cache_data
+def test_set(data):
+    return get_split_data(data)
 
 def main_process() -> None:
     set_config()
     eda_tab, model_tab = set_tabs()
     data = load_data()
-    X_test, y_test, columns = get_split_data(data)
+    X_test, y_test, columns = test_set(data)
 
     charts(eda_tab, data)
     corr_and_tables(eda_tab, data)
@@ -78,8 +81,13 @@ def roc_curve(tab, X_test, y_test) -> None:
         st.divider()
         col1, col2 = st.columns(2)
         with col1:
-            st.subheader('ROC-AUG')
+            st.subheader('О модели')
+            st.markdown('Для решения задачи бинарной классификации несбалансированных целевых переменных '
+                        'при обработке данных использовался метод Расширения кол-ва наблюдений минорного '
+                        'класса (`SMOTE`). В качестве модели был выбран SVC с линейным ядром. Вероятности откалиброванны '
+                        '(`CalibratedClassifierCV`)')
         with col2:
+            st.subheader('ROC-AUG')
             st.pyplot(get_roc_curve(y_test, get_probs_ROC(X_test)))
 
 def test_with_limit(tab, X_test, y_test) -> None:
@@ -136,7 +144,8 @@ def predict_part(tab, data) -> None:
         with col33:
             income = st.number_input('Введите доход',
                                      min_value=0,
-                                     value=20000)
+                                     value=20000,
+                                     step=1000)
             work = st.selectbox(
                 'Выберете рабочий статус',
                 options=['Есть работа', 'Безработный'],
@@ -159,6 +168,7 @@ def predict_part(tab, data) -> None:
 
         features = [age, gender, education, family_status,
                     child, dependat, work, pens, income, loans, closed_loans]
+        print(features)
         proba = get_predict(features)
         st.success(f"Вероятность отклика - {proba} %")
 

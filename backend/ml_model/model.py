@@ -57,7 +57,7 @@ def get_predict_proba(features):
        'DEPENDANTS', 'SOCSTATUS_WORK_FL', 'SOCSTATUS_PENS_FL',
        'PERSONAL_INCOME', 'Loan_count', 'Closed_loans'], data=[features])
     categorical_columns = ['EDUCATION', 'MARITAL_STATUS']
-    categorical_encoded = encoder.transform(client_info[categorical_columns],)
+    categorical_encoded = encoder.transform(client_info[categorical_columns])
     categorical_df = pd.DataFrame(categorical_encoded, columns=encoder.get_feature_names_out(categorical_columns))
     df_encoded = pd.concat([client_info, categorical_df], axis=1)
 

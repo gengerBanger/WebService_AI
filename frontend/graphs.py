@@ -63,7 +63,7 @@ def get_report(y_test, new_labels):
     return matrix, report
 
 def get_roc_curve(y_test, probs):
-    roc_display = RocCurveDisplay.from_predictions(y_test, probs)
+    roc_display = RocCurveDisplay.from_predictions(y_test, probs, name='SVC')
     fig, ax = plt.subplots(figsize=(8, 4))
     roc_display.plot(ax=ax)
     return fig
